@@ -1,0 +1,42 @@
+% This package provides support for prefixes in qnames
+%
+% Defined commands:
+% \setprefix{foaf}{http://xmlns.com/foaf/0.1/}
+%		Define a prefix namespace
+% \getprefix{foaf}
+%		Get a defined prefix namespace
+% \qname{foaf:Person} has to contain a colon
+%		Write a qname, where the prefix will be linkt to the defined namespace and the qualifier will be linked to the whole URI
+% \mailto{arndtn@gmail.com}
+%		Write an email-Address and link it with a mailto: infront of it
+%
+% (c) 2013 Natanael Arndt
+% Thanks to all the contributors of
+% - http://tex.stackexchange.com/questions/114666/create-an-array-of-variables-with-string-keys
+% - http://tex.stackexchange.com/questions/114635/using-variables-in-a-command-results-in-argument-of-reserveda-has-an-extra
+% especially to David Carlisle
+%
+% LPPL LaTeX Public Project License
+%  
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{qname}
+  [2013/05/16 v0.01 LaTeX package for prefix support in qnames and mailto]
+
+\RequirePackage{hyperref}
+\RequirePackage{url}
+
+\def\setprefix#1#2{\expandafter\def\csname prefix@#1\endcsname{#2}}
+\def\getprefix#1{\csname prefix@#1\endcsname}
+
+\def\qname#1{\xqname#1\\}
+
+\def\xqname#1:#2\\{%
+	\href{\getprefix{#1}}{\nolinkurl{#1:}}%
+	\href{\getprefix{#1}#2}{\nolinkurl{#2}}%
+}
+
+\newcommand{\mailto}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
+
+\endinput
+%%
+%% End of file `qname.sty'.
