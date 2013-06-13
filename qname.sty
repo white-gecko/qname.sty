@@ -25,6 +25,7 @@
 % Thanks to all the contributors of
 % - http://tex.stackexchange.com/questions/114666/create-an-array-of-variables-with-string-keys
 % - http://tex.stackexchange.com/questions/114635/using-variables-in-a-command-results-in-argument-of-reserveda-has-an-extra
+% - http://tex.stackexchange.com/questions/95093/automatic-line-breaking-of-camel-case-within-url
 % especially to David Carlisle
 %
 % LPPL LaTeX Public Project License
@@ -51,7 +52,6 @@
 \newcommand{\mailto}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
 
 % Wrapping Camel Caps
-% http://tex.stackexchange.com/questions/95093/automatic-line-breaking-of-camel-case-within-url
 \makeatletter
 \g@addto@macro\UrlSpecials{\camelurl}
 \def\camelurl{%
