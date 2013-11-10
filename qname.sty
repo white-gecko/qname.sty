@@ -40,7 +40,9 @@
 \def\setprefix#1#2{\expandafter\def\csname prefix@#1\endcsname{#2}}
 \def\getprefix#1{\csname prefix@#1\endcsname}
 
-\newcommand{\prefix}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}}
+\newcommand{\prefix}{\@ifstar\prefixStar\prefixNoStar}
+\newcommand{\prefixStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}\footnote{#1: \getprefix{#1}}}
+\newcommand{\prefixNoStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}}
 
 \def\qname#1{\xqname#1\\}
 
