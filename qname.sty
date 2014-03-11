@@ -61,6 +61,8 @@
 \csuse{qname#1desc}%
 }
 
+%\newcommand{\prefixRefList}[1]{\forlistloop{\prefixRefListItem}{\qname#1Refs}}
+\newcommand{\prefixRefList}[1]{\pageref{qname:#1}}
 
 \newcommand \prefixdotfill {\leavevmode \cleaders \hb@xt@ .7em{\hss .\hss }\hfill \kern \z@}
 
@@ -73,6 +75,7 @@
   {%
       \noindent \prefix{#1} \prefixdotfill \url{\getprefix{#1}}\\
       {\small\csuse{qname#1desc}}
+      \prefixdotfill\hspace{1.5mm}\prefixRefList{#1}
 
       \bigskip
   }
