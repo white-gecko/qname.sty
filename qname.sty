@@ -36,6 +36,59 @@
 
 \RequirePackage{hyperref}
 \RequirePackage{url}
+\RequirePackage{etoolbox}       % Tool-box for LaTeX programmers using e-TeX
+%\RequirePackage{forloop}        % \forloop[step]{counter}{initial value}{condition}{code}
+%\RequirePackage{ifthen}         % if-then-else and math functions
+%\RequirePackage{calc}           % Simple arithmetic in LaTeX commands
+
+% todo: sort alphabetical http://tex.stackexchange.com/questions/6988/how-to-sort-an-alphanumeric-list
+
+
+% maybe these get/set prefix commands are more easy to read
+%\newcommand{\setprefix}[2]{%
+%\csdef{qname#1url}{#2}%
+%\listadd{\qnames}{#1}%
+%}
+%\newcommand{\getprefix}[1]{%
+%\csuse{qname#1url}%
+%}
+
+\newcommand{\setprefixDescription}[2]{%
+\csdef{qname#1desc}{#2}%
+\listadd{\qnamesWithDesc}{#1}%
+}
+\newcommand{\getprefixdesc}[1]{%
+\csuse{qname#1desc}%
+}
+
+%\newcommand{\prefixRefList}[1]{\forlistloop{\prefixRefListItem}{\qname#1Refs}}
+\newcommand{\prefixRefList}[1]{\pageref{qname:#1}}
+
+\newcommand \prefixdotfill {\leavevmode \cleaders \hb@xt@ .7em{\hss .\hss }\hfill \kern \z@}
+
+\newcommand{\renderPrefixListBegin}{%
+%\begin{description}
+}
+\newcommand{\renderPrefixListItem}[1]{%
+\ifthenelse{\equal{\getprefix{#1}}{\@empty}}
+  {\relax}
+  {%
+      \noindent \prefix{#1} \prefixdotfill \url{\getprefix{#1}}\\
+      {\small\csuse{qname#1desc}}
+      \prefixdotfill\hspace{1.5mm}\prefixRefList{#1}
+
+      \bigskip
+  }
+}
+\newcommand{\renderPrefixListEnd}{%
+%\end{description}
+}
+
+\newcommand{\listUsedPrefixes}{%
+\renderPrefixListBegin{}
+\forlistloop{\renderPrefixListItem}{\qnamesWithDesc}
+\renderPrefixListEnd{}
+}
 
 \def\setprefix#1#2{\expandafter\def\csname prefix@#1\endcsname{#2}}
 \def\getprefix#1{\csname prefix@#1\endcsname}
@@ -77,16 +130,16 @@
 \makeatother
 
 % Predefined namespace prefixes
-\setprefix{dc}{http://purl.org/dc/elements/1.1/}
-\setprefix{dct}{http://purl.org/dc/terms/}
-\setprefix{foaf}{http://xmlns.com/foaf/0.1/} % http://xmlns.com/foaf/spec/\#term_
-\setprefix{ov}{http://open.vocab.org/docs/}
-\setprefix{owl}{http://www.w3.org/2002/07/owl\#}
-\setprefix{rdf}{http://www.w3.org/1999/02/22-rdf-syntax-ns\#}
-\setprefix{rdfs}{http://www.w3.org/2000/01/rdf-schema\#}
-\setprefix{sioc}{http://rdfs.org/sioc/ns\#} % http://rdfs.org/sioc/spec/\#term_
-\setprefix{sioct}{http://rdfs.org/sioc/types\#}
-\setprefix{xsd}{http://www.w3.org/2001/XMLSchema\#}
+%\setprefix{dc}{http://purl.org/dc/elements/1.1/}
+%\setprefix{dct}{http://purl.org/dc/terms/}
+%\setprefix{foaf}{http://xmlns.com/foaf/0.1/} % http://xmlns.com/foaf/spec/\#term_
+%\setprefix{ov}{http://open.vocab.org/docs/}
+%\setprefix{owl}{http://www.w3.org/2002/07/owl\#}
+%\setprefix{rdf}{http://www.w3.org/1999/02/22-rdf-syntax-ns\#}
+%\setprefix{rdfs}{http://www.w3.org/2000/01/rdf-schema\#}
+%\setprefix{sioc}{http://rdfs.org/sioc/ns\#} % http://rdfs.org/sioc/spec/\#term_
+%\setprefix{sioct}{http://rdfs.org/sioc/types\#}
+%\setprefix{xsd}{http://www.w3.org/2001/XMLSchema\#}
 
 \endinput
 %%
