@@ -37,28 +37,29 @@
 \RequirePackage{hyperref}
 \RequirePackage{url}
 \RequirePackage{etoolbox}       % Tool-box for LaTeX programmers using e-TeX
-%\RequirePackage{forloop}        % \forloop[step]{counter}{initial value}{condition}{code}
 %\RequirePackage{ifthen}         % if-then-else and math functions
 %\RequirePackage{calc}           % Simple arithmetic in LaTeX commands
 
 % todo: sort alphabetical http://tex.stackexchange.com/questions/6988/how-to-sort-an-alphanumeric-list
 
-
 % maybe these get/set prefix commands are more easy to read
-%\newcommand{\setprefix}[2]{%
-%\csdef{qname#1url}{#2}%
-%\listadd{\qnames}{#1}%
-%}
-%\newcommand{\getprefix}[1]{%
-%\csuse{qname#1url}%
-%}
+\newcommand{\setprefix}[2]{%
+  \csdef{prefix@#1}{#2}%
+  \listadd{\qnames}{#1}%
+}
+\newcommand{\getprefix}[1]{%
+  \csuse{prefix@#1}%
+}
+
+% \def\setprefix#1#2{\expandafter\def\csname prefix@#1\endcsname{#2}}
+% \def\getprefix#1{\csname prefix@#1\endcsname}
 
 \newcommand{\setprefixDescription}[2]{%
-\csdef{qname#1desc}{#2}%
+\csdef{prefixdesc@#1}{#2}%
 \listadd{\qnamesWithDesc}{#1}%
 }
 \newcommand{\getprefixdesc}[1]{%
-\csuse{qname#1desc}%
+\csuse{prefixdesc@#1}%
 }
 
 %\newcommand{\prefixRefList}[1]{\forlistloop{\prefixRefListItem}{\qname#1Refs}}
@@ -69,29 +70,50 @@
 \newcommand{\renderPrefixListBegin}{%
 %\begin{description}
 }
+
+%%
+% A list of the used prefixes with a verbose description
+%
 \newcommand{\renderPrefixListItem}[1]{%
 \ifthenelse{\equal{\getprefix{#1}}{\@empty}}
   {\relax}
   {%
       \noindent \prefix{#1} \prefixdotfill \url{\getprefix{#1}}\\
-      {\small\csuse{qname#1desc}}
+      {\small\getprefixdesc{#1}}
       \prefixdotfill\hspace{1.5mm}\prefixRefList{#1}
 
       \bigskip
   }
 }
+
+%%
+% A simple comma seperated list of prefix/namespace definitions
+%
+\newcommand{\renderPrefixListItemStar}[1]{%
+\ifthenelse{\equal{\getprefix{#1}}{\@empty}}
+  {\relax}
+  {%
+    \itemdelim\
+    \prefix{#1}: \url{\getprefix{#1}}%
+  }%
+}
 \newcommand{\renderPrefixListEnd}{%
 %\end{description}
 }
 
-\newcommand{\listUsedPrefixes}{%
+
+\newcommand{\listUsedPrefixes}{\@ifstar\listUsedPrefixesStar\listUsedPrefixesNoStar}
+
+\newcommand{\listUsedPrefixesNoStar}{%
 \renderPrefixListBegin{}
 \forlistloop{\renderPrefixListItem}{\qnamesWithDesc}
 \renderPrefixListEnd{}
 }
 
-\def\setprefix#1#2{\expandafter\def\csname prefix@#1\endcsname{#2}}
-\def\getprefix#1{\csname prefix@#1\endcsname}
+\newcommand{\listUsedPrefixesStar}{%
+\def\itemdelim{\def\itemdelim{,}}% Define a delimiter which is delayed according to http://tex.stackexchange.com/a/89187/5764
+\forlistloop{\renderPrefixListItemStar}{\qnames}%
+}
 
 \newcommand{\prefix}{\@ifstar\prefixStar\prefixNoStar}
 \newcommand{\prefixStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}\footnote{#1: \getprefix{#1}}}
