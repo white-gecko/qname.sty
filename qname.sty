@@ -2,17 +2,23 @@
 %
 % Defined commands:
 % \setprefix{foaf}{http://xmlns.com/foaf/0.1/}
-%		Define a prefix namespace
+%       Define a prefix namespace
 % \getprefix{foaf}
-%		Get a defined prefix namespace
+%       Get a defined prefix namespace
 % \prefix{foaf}
-%		Just output the prefix linked to the namespace
+% \prefix*{foaf}
+%       Just output the prefix linked to the namespace (The star-version additionally prints the namespace URI in a \footnote)
 % \qname{foaf:Person} has to contain a colon
-%		Write a qname, where the prefix will be linkt to the defined namespace and the qualifier will be linked to the whole URI
+%       Write a qname, where the prefix will be linked to the defined namespace and the qualifier will be linked to the whole URI
 % \mailto{arndtn@gmail.com}
-%		Write an email-Address and link it with a mailto: infront of it
+%       Write an email-Address and link it with a mailto: in front of it (actually this shouldn't be in a qname package ;-) )
+% \setprefixDescription{foaf}{Friend of a Friend (FOAF): an experimental linked information system.}
+%       Define a short description for a prefix/vocabulary
+% \listUsedPrefixes
+% \listUsedPrefixes*
+%       Produces a list of the used resp. defined prefix mappings
 %
-% 
+%
 % Changelog:
 % 0.01:
 %   * Add \setprefix, \getprefix, \qname and \mailto
@@ -20,8 +26,15 @@
 %   * Add \prefix
 %   * Add support for wrapping urls and qnames with camel caps
 %   * Add some commonly used prefixes (dc, dct, foaf, ov, rdf, sioc, sioct and xsd)
+% 0.03
+%   * Add star version: \prefix*, to print the namespace URI in a \footnote
+%   * Add \setprefixDescription to define a short description for a vocabulary
+%   * Add \listUsedPrefixes to list all defined/used prefixes and its description
+%   * Add page number command to list of used Prefixes (label must be set manually …)
+%   * Add \listUsedPrefixes* for a simplified prefix list
+%   * Improve implementation of \setprefix and \getprefix
 %
-% (c) 2013 Natanael Arndt
+% (c) 2013–2016 Natanael Arndt
 % Thanks to all the contributors of
 % - http://tex.stackexchange.com/questions/114666/create-an-array-of-variables-with-string-keys
 % - http://tex.stackexchange.com/questions/114635/using-variables-in-a-command-results-in-argument-of-reserveda-has-an-extra
@@ -29,10 +42,10 @@
 % especially to David Carlisle
 %
 % LPPL LaTeX Public Project License
-%  
+%
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{qname}
-  [2013/06/13 v0.02 LaTeX package for prefix support in qnames]
+  [2016/01/15 v0.03 LaTeX package for prefix support in qnames]
 
 \RequirePackage{hyperref}
 \RequirePackage{url}
