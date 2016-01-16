@@ -46,6 +46,9 @@
 %   * Move some code arround and add comments for all commands
 %   * Document bonus feature (wrapping camel caps URLs)
 %   * Remove some unused code
+% 0.05
+%   * Mark internal commands with @
+%   * fix \listUsedPrefixes and \listUsedPrefixes*
 %
 % (c) 2013–2016 Natanael Arndt
 % Thanks to all the contributors of
@@ -58,11 +61,12 @@
 %
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{qname}
-  [2016/01/16 v0.04 LaTeX package for prefix support in qnames]
+  [2016/01/16 v0.05 LaTeX package for prefix support in qnames]
 
 \RequirePackage{hyperref}
 \RequirePackage{url}
 \RequirePackage{etoolbox}       % Tool-box for LaTeX programmers using e-TeX
+\RequirePackage{ifthen}
 
 % todo: sort alphabetical http://tex.stackexchange.com/questions/6988/how-to-sort-an-alphanumeric-list
 
@@ -81,24 +85,24 @@
 \listadd{\qnamesWithDesc}{#1}%
 }
 
-\newcommand{\getprefixdesc}[1]{%
+\newcommand{\@getprefixdesc}[1]{%
 \csuse{prefixdesc@#1}%
 }
 
-\newcommand{\prefixRefList}[1]{\pageref{qname:#1}}
+\newcommand{\@prefixRefList}[1]{\pageref{qname:#1}}
 
-\newcommand \prefixdotfill {\leavevmode \cleaders \hb@xt@ .7em{\hss .\hss }\hfill \kern \z@}
+\newcommand \@prefixdotfill {\leavevmode \cleaders \hb@xt@ .7em{\hss .\hss }\hfill \kern \z@}
 
 %%
 % A list of the used prefixes with a verbose description
 %
-\newcommand{\renderPrefixListItem}[1]{%
+\newcommand{\@renderPrefixListItem}[1]{%
 \ifthenelse{\equal{\getprefix{#1}}{\@empty}}
   {\relax}
   {%
-      \noindent \prefix{#1} \prefixdotfill \url{\getprefix{#1}}\\
-      {\small\getprefixdesc{#1}}
-      \prefixdotfill\hspace{1.5mm}\prefixRefList{#1}
+      \noindent \prefix{#1} \@prefixdotfill \url{\getprefix{#1}}\\
+      {\small\@getprefixdesc{#1}}
+      \@prefixdotfill\hspace{1.5mm}\@prefixRefList{#1}
 
       \bigskip
   }
@@ -107,7 +111,7 @@
 %%
 % A simple comma seperated list of prefix/namespace definitions
 %
-\newcommand{\renderPrefixListItemStar}[1]{%
+\newcommand{\@renderPrefixListItemStar}[1]{%
 \ifthenelse{\equal{\getprefix{#1}}{\@empty}}
   {\relax}
   {%
@@ -117,26 +121,26 @@
 }
 
 % \listUsedPrefixes and \listUsedPrefixes* commands
-\newcommand{\listUsedPrefixes}{\@ifstar\listUsedPrefixesStar\listUsedPrefixesNoStar}
+\newcommand{\listUsedPrefixes}{\@ifstar\@listUsedPrefixesStar\@listUsedPrefixesNoStar}
 
-\newcommand{\listUsedPrefixesNoStar}{%
-\forlistloop{\renderPrefixListItem}{\qnamesWithDesc}
+\newcommand{\@listUsedPrefixesNoStar}{%
+\forlistloop{\@renderPrefixListItem}{\qnamesWithDesc}
 }
 
-\newcommand{\listUsedPrefixesStar}{%
+\newcommand{\@listUsedPrefixesStar}{%
 \def\itemdelim{\def\itemdelim{,}}% Define a delimiter which is delayed according to http://tex.stackexchange.com/a/89187/5764
-\forlistloop{\renderPrefixListItemStar}{\qnames}%
+\forlistloop{\@renderPrefixListItemStar}{\qnames}%
 }
 
 % \prefix and \prefix* commands
-\newcommand{\prefix}{\@ifstar\prefixStar\prefixNoStar}
-\newcommand{\prefixStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}\footnote{#1: \getprefix{#1}}}
-\newcommand{\prefixNoStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}}
+\newcommand{\prefix}{\@ifstar\@prefixStar\@prefixNoStar}
+\newcommand{\@prefixStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}\footnote{#1: \getprefix{#1}}}
+\newcommand{\@prefixNoStar}[1]{\href{\getprefix{#1}}{\nolinkurl{#1}}}
 
 % \qname command
-\def\qname#1{\xqname#1\\}
+\def\qname#1{\@xqname#1\\}
 
-\def\xqname#1:#2\\{%
+\def\@xqname#1:#2\\{%
   \href{\getprefix{#1}}{\nolinkurl{#1:}}%
   \href{\getprefix{#1}#2}{\nolinkurl{#2}}%
 }
