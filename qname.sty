@@ -49,6 +49,9 @@
 % 0.05
 %   * Mark internal commands with @
 %   * fix \listUsedPrefixes and \listUsedPrefixes*
+% 0.06
+%   * Add \setQNameStyle to define a style for \qname if it should be different to the defined \urlstyle (default: use \urlstyle)
+%   * Fix \listUsedPrefixes* by adding a space after the delimiter (", ")
 %
 % (c) 2013–2016 Natanael Arndt
 % Thanks to all the contributors of
@@ -61,7 +64,7 @@
 %
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{qname}
-  [2016/01/16 v0.05 LaTeX package for prefix support in qnames]
+  [2016/02/27 v0.06 LaTeX package for prefix support in qnames]
 
 \RequirePackage{hyperref}
 \RequirePackage{url}
@@ -69,6 +72,13 @@
 \RequirePackage{ifthen}
 
 % todo: sort alphabetical http://tex.stackexchange.com/questions/6988/how-to-sort-an-alphanumeric-list
+
+% \setQNameStyle
+% The style can be "tt", "rm", "sf" or "same" or any other defined url style
+% Please take a look at the url packes documentation for further advice
+\newcommand{\setQNameStyle}[1]{%
+  \csdef{@qnamestyle}{#1}%
+}
 
 % \setprefix and \getprefix commands
 \newcommand{\setprefix}[2]{%
@@ -128,7 +138,7 @@
 }
 
 \newcommand{\@listUsedPrefixesStar}{%
-\def\itemdelim{\def\itemdelim{,}}% Define a delimiter which is delayed according to http://tex.stackexchange.com/a/89187/5764
+\def\itemdelim{\def\itemdelim{, }}% Define a delimiter which is delayed according to http://tex.stackexchange.com/a/89187/5764
 \forlistloop{\@renderPrefixListItemStar}{\qnames}%
 }
 
@@ -140,9 +150,13 @@
 % \qname command
 \def\qname#1{\@xqname#1\\}
 
+% Alternatively to \urlstyle could \def\UrlFont{\ttfamily} be used, which seems to be more flexible
 \def\@xqname#1:#2\\{%
+  \let\@QNameOrigUrlFont\UrlFont%                       store original UrlFont
+  \ifcsdef{@qnamestyle}{\urlstyle{\@qnamestyle}}{}%     if \setQNameStyle was called, set the style accordingly
   \href{\getprefix{#1}}{\nolinkurl{#1:}}%
   \href{\getprefix{#1}#2}{\nolinkurl{#2}}%
+  \let\UrlFont\@QNameOrigUrlFont%                       reset original UrlFont
 }
 
 % 'presetPrefixes' option
